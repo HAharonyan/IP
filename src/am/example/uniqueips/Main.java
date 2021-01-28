@@ -19,19 +19,27 @@ public class Main {
         }
 
         HashSet<IPv4> ipSet = new HashSet<>();
+        long count = 0;
 
-        while (true) {
+        outer: while (true) {
             String line = null;
             try {
                 if (((line = reader.readLine()) == null)) break;
+                count++;
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if(line.trim().equals("")) continue;
+            if(line.trim().equals("")) {
+                System.err.println("Illegal IP in line: " + count);
+                continue;
+            }
 
             String[] numbersStr = line.split("\\.");
-            if(numbersStr.length != 4) continue;
+            if(numbersStr.length != 4) {
+                System.err.println("Illegal IP in line: " + count);
+                continue;
+            }
 
             byte[] numbersByte = new byte[4];
             for(int i = 0; i < numbersStr.length; i++) {
@@ -39,11 +47,13 @@ public class Main {
                 try {
                     value = Short.parseShort(numbersStr[i]);
                 } catch (NumberFormatException e) {
-                    continue;
+                    System.err.println("Illegal IP in line: " + count);
+                    continue outer;
                 }
 
                 if(value < 0 || value > 255) {
-                    continue;
+                    System.err.println("Illegal IP in line: " + count);
+                    continue outer;
                 }
 
                 numbersByte[i] = (byte) (value - 128);
@@ -53,6 +63,6 @@ public class Main {
         }
 
         long numberOfIP = ipSet.size();
-        System.out.println(numberOfIP);
+        System.out.println("Unique IPs = " + numberOfIP);
     }
 }
